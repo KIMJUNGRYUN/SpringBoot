@@ -164,7 +164,7 @@ public class AnswerService {
 
 <hr>
 
-###4.리포지토리
+### 4.리포지토리
 `QuestionRepository`
 ```java
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
@@ -178,7 +178,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {}
 ```
 <hr>
 
-###5.템플릿
+### 5.템플릿
 `q_list.html` **(질문 목록)**
 ```java
 <!DOCTYPE html>
