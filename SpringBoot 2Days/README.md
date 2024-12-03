@@ -1,8 +1,8 @@
 ## Q&A 게시판 만들기
-# 연습 소개
+### 연습 소개
 이 프로젝트는 Spring Boot를 사용하여 구현한 간단한 Q&A (질문과 답변) 웹 애플리케이션입니다. 사용자는 질문을 작성하고, 다른 사용자가 답변을 추가할 수 있습니다. Thymeleaf를 사용하여 HTML 템플릿을 렌더링하고, Spring Data JPA로 데이터베이스와 상호작용합니다.
 
-# 주요 기능
+### 주요 기능
 1. 질문 목록 조회
 2. 질문 상세 보기
 3. 질문 등록
@@ -11,8 +11,8 @@
 
 <hr>
 
-# 프로젝트 구조
-# 1. 엔티티 (Entity)
+### 프로젝트 구조
+### 1. 엔티티 (Entity)
 **`Question` 엔티티**
 ```java
 @Entity
@@ -60,7 +60,7 @@ public class Answer {
 - 특정 질문에 대한 답변 데이터를 저장합니다.
 <hr>
 
-# 2.컨트롤러
+### 2.컨트롤러
 `QuestionController`
 ```java
 @Controller
@@ -120,7 +120,7 @@ public class AnswerController {
 - 특정 질문에 대한 답변 등록 요청을 처리합니다.
 <hr>
 
-# 3.서비스
+### 3.서비스
 `QuestionService`
 ```java
 @Service
@@ -164,7 +164,7 @@ public class AnswerService {
 
 <hr>
 
-#4.리포지토리
+###4.리포지토리
 `QuestionRepository`
 ```java
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
@@ -178,7 +178,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {}
 ```
 <hr>
 
-#5.템플릿
+###5.템플릿
 `q_list.html` **(질문 목록)**
 ```java
 <!DOCTYPE html>
