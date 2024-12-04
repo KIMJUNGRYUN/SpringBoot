@@ -35,7 +35,7 @@ public class Question {
    - `content`: 질문 내용.
    - `createDate`: 질문이 생성된 시간.
    - `answerList`: 이 질문에 연결된 답변 목록. **일대다 관계**로 설정됨.
-- `@OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE):
+- `@OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)`:
       - 이 질문이 삭제되면, 연결된 답변도 함께 삭제됨.
 <hr>
 
@@ -60,10 +60,10 @@ public class Answer {
 ```
 - 이 클래스는 **답변 데이터**를 데이터베이스 테이블에 매핑.
 - 주요 필드:
-      - `id`: 답변의 고유 식별자(기본키).
-      - `content`: 답변 내용.
-      - `createDate`: 답변이 생성된 시간.
-      - `question`: 이 답변이 속한 질문과의 관게를 나타냄.
+    - `id`: 답변의 고유 식별자(기본키).
+    - `content`: 답변 내용.
+    - `createDate`: 답변이 생성된 시간.
+    - `question`: 이 답변이 속한 질문과의 관게를 나타냄.
 - `@ManyToOne`:
       - 여러 답변이 하나의 질문에 연결될 수 있는 관계를 정의.
 <hr>
