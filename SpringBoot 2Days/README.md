@@ -36,7 +36,7 @@ public class Question {
    - `createDate`: 질문이 생성된 시간.
    - `answerList`: 이 질문에 연결된 답변 목록. **일대다 관계**로 설정됨.
 - `@OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)`:
-      - 이 질문이 삭제되면, 연결된 답변도 함께 삭제됨.
+  - 이 질문이 삭제되면, 연결된 답변도 함께 삭제됨.
 <hr>
 
 ### 2.**`Answer` 엔티티**
