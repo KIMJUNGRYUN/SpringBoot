@@ -20,6 +20,7 @@
   </nav>
 ```
 - 네비게이션 바 추가
+
 ![nav](https://github.com/user-attachments/assets/c3cd3240-9eb4-4e3f-ac4d-dbd30f76fe28)
 
 
