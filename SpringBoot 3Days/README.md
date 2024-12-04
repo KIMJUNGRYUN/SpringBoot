@@ -158,7 +158,7 @@ public Page<Question> getList(int page){
 - `th:if="${page >= paging.number-5 and page <= paging.number+5}"` 이 코드는 페이지 리스트가 현재 페이지 기준으로 좌우 5개씩 보이도록 만든다.
 
 
-** 작성일시 역순으로 조회하기**
+**작성일시 역순으로 조회하기**
 
 `QuestionService`
 
