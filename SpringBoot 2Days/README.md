@@ -31,9 +31,13 @@ public class Question {
 - 이 클래스는 질문 데이터를 데이터베이스 테이블에 매핑.
 - 주요 필드:
       - `id`: 질문의 고유 식별자 (기본키).
+  
       - `subject`: 질문 제목.
+  
       - `content`: 질문 내용.
+  
       - `createDate`: 질문이 생성된 시간.
+  
       - `answerList`: 이 질문에 연결된 답변 목록. **일대다 관계**로 설정됨.
 - `@OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE):
       - 이 질문이 삭제되면, 연결된 답변도 함께 삭제됨.
