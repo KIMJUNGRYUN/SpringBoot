@@ -159,7 +159,9 @@ public Page<Question> getList(int page){
 
 
 ** 작성일시 역순으로 조회하기**
+
 `QuestionService`
+
 ```spring
 public Page<Question> getList(int page){
 		Pageable pageable = PageRequest.of(page, 10, Sort.by("createDate").descending());
