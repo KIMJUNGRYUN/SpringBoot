@@ -82,6 +82,7 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
 - Pageable 객체를 입력으로 받아 `Page<Question>`타입 객체를 리턴하는 findAll메서드를 생성.
 
 **QuestionService**
+
 ```spring
 public Page<Question> getList(int page){
 		Pageable pageable = PageRequest.of(page, 10);
