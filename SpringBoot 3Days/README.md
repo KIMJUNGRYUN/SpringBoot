@@ -142,7 +142,9 @@ public Page<Question> getList(int page){
 - 페이지 리스트를 루프 돌면서 해당 페이지로 이동할 수 있는 링크를 생성하였다
 
 **템플릿에 사용된 주요 페이징 기능을 표로 정리**
+
 ![table](https://github.com/user-attachments/assets/6c696c40-e879-47e6-a003-446a8f6cd89a)
+
 - 페이징 처리는 잘 되었지만 페이지가 모두 표시된다.
  
 - 이 문제를 해결하기 위해 다음과 같이 질문 목록 템플릿을 수정하자
@@ -154,6 +156,278 @@ public Page<Question> getList(int page){
 - `th:if="${page >= paging.number-5 and page <= paging.number+5}"` 이 코드는 페이지 리스트가 현재 페이지 기준으로 좌우 5개씩 보이도록 만든다.
 
 
+** 작성일시 역순으로 조회하기**
+`QuestionService`
+```spring
+public Page<Question> getList(int page){
+		Pageable pageable = PageRequest.of(page, 10, Sort.by("createDate").descending());
+		return this.qRepo.findAll(pageable);
+	}
+```
+- 게시물을 역순으로 조회하기 위해서는 위와 같이 `PageRequest.of` 메서드의 세번째 파라미터로 `Sort` 객체를 전달
+
+**게시물 번호가 1부터 시작되는 문제**
+`게시물 번호 공식 만들기`
+- 번호 = 전체 게시물 개수 - (현재페이지 * 페이지당 게시물 개수) - 나열 인덱스
+
+![index](https://github.com/user-attachments/assets/74bde841-fa3e-42d4-80cc-19553dae00fa)
+**게시물 번호 공식을 질문 목록 템플릿에 적용하기**
+```html
+<td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
+```
+![sort](https://github.com/user-attachments/assets/b5c70ca5-09ab-4ba9-bb8f-8ae21116250b)
+
+**질문에 달린 답변 개수 표시**
+`Question_list.html`
+```html
+  <td>
+	<a th:href="@{/question/detail/__${question.id}__}" th:text="${question.subject}"></a>
+	 <span class="text-danger small ms-2"
+	  th:if="${#lists.size(question.answerList) > 0}" 
+	th:text="${#lists.size(question.answerList)}">
+	</span>              
+  </td>
+```
+- `th:if="${#lists.size(question.answerList) > 0}"`로 답변이 있는지 조사
+- `th:text="${#lists.size(question.answerList)}"`로 답변 개수를 표시했다.
+
+![num](https://github.com/user-attachments/assets/83819500-4e3e-4c31-9c6f-2cc541f2ea9e)
+
+<hr>
+
+**스프링 스큐리티**
+- 스프링 시큐리티는 스프링 기반 애플리케이션의 인증과 권한을 담당하는 스프링의 하위 프레임워크.
+   - 인증(Authenticate)은 로그인을 의미한다.
+   - 권한(Authorize)은 인증된 사용자가 어떤 것을 할 수 있는지를 의미한다.
+
+```spring
+package com.mysite.sbb;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
+                .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
+        ;
+        return http.build();
+    }
+}
+```
+- **@Configuration**은 스프링의 환결설정 파일임을 의미하는 애너테이션이다.
+- **@EnableWebSecurity**은 모든 요청 URL이 스프링 시큐리티의 제어를 받도록 만드는 애너테이션이다.
+- `@EnableWebSecurity 애너테이션을 사용하면 내부적으로 SpringSecurityFilterChain이 동작하여 URL 필터가 적용된다.`
+- 스프링 시큐리티의 세부 설정은 `SecurityFilterChain 빈`을 생성하여 설정할 수 있다
+
+**스프링 시큐리티가 CSRF 처리시 H2 콘솔은 예외로 처리할 수 있도록**
+```spring
+ http
+	.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
+                .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
+	.csrf((csrf) -> csrf
+		.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))
+	 .headers((headers) -> headers
+                .addHeaderWriter(new XFrameOptionsHeaderWriter(
+                    XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
+        ;
+        return http.build();
+```
+
+- 위 처럼 URL 요청시 `X-Frame-Options` 헤더값을 `sameorigin`으로 설정하여 오류가 발생하지 않도록 했다.
+
+**회원가입 페이지**
+`회원정보 엔티티`
+```spring
+@Getter
+@Setter
+@Entity
+public class SiteUser {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
+    @Column(unique = true)
+    private String email;
+}
+```
+-`username`, `email` 속성에는 `@Column(unique = true`) 처럼 `unique = true`를 지정했다. `unique = true`는 유일한 값만 저장할 수 있음을 의미한다. 즉, 값을 중복되게 저장할 수 없음을 뜻한다. 이렇게 해야 `username`과 `email`에 동일한 값이 저장되지 않는다.
+
+**UserRepository**
+```spring
+public interface UserRepository extends JpaRepository<SiteUser, Long> {
+}
+```
+- SiteUser의 PK의 타입은 Long이다. 따라서 JpaRepository<SiteUser, Long>처럼 사용했다.
+
+**SecurityConfig**
+```spring
+ @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+```
+- PasswordEncoder를 @Bean으로 등록
+
+**UserService**
+```spring
+	@Autowired
+	private PasswordEncoder passEncoder;
+	
+    public SiteUser create(String username, String email, String password) {
+        SiteUser user = new SiteUser();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(passEncoder.encode(password));
+        this.userRepo.save(user);
+        return user;
+    }
+```
+- **BCryptPasswordEncoder** 객체를 직접 생성하여 사용하지 않고 빈으로 등록한 **PasswordEncoder** 객체를 주입받아 사용하도록 수정했다.
+
+**회원가입 폼**
+`UserCreateForm`
+```spring
+@Getter
+@Setter
+public class UserCreateForm {
+    @Size(min = 3, max = 25)
+    @NotEmpty(message = "사용자ID는 필수항목입니다.")
+    private String username;
+
+    @NotEmpty(message = "비밀번호는 필수항목입니다.")
+    private String password1;
+
+    @NotEmpty(message = "비밀번호 확인은 필수항목입니다.")
+    private String password2;
+
+    @NotEmpty(message = "이메일은 필수항목입니다.")
+    @Email
+    private String email;
+}
+```
+- username은 필수항목이고 길이가 3-25 사이여야 한다는 검증조건을 설정.
+- @Size는 폼 유효성 검증시 문자열의 길이가 최소길이(min)와 최대길이(max) 사이에 해당하는지를 검증. 
+- password1과 password2는 "비밀번호"와 "비밀번호확인"에 대한 속성. 로그인 할때는 비밀번호가 한번만 필요하지만 회원가입시에는 입력한 비밀번호가 정확한지 확인하기 위해 2개의 필드가 필요. 
+-  email 속성에는 @Email 애너테이션이 적용.
+
+<hr>
+
+**회원가입 컨트롤러**
+```spring
+@Controller
+@RequestMapping("/user")
+public class UserController {
+	
+	@Autowired
+    private UserService userService;
+
+    @GetMapping("/signup")
+    public String signup(UserCreateForm userCreateForm) {
+        return "signup_form";
+    }
+
+    @PostMapping("/signup")
+    public String signup(@Valid UserCreateForm userCreateForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "signup_form";
+        }
+
+        if (!userCreateForm.getPassword1().equals(userCreateForm.getPassword2())) {
+            bindingResult.rejectValue("password2", "passwordInCorrect", 
+                    "2개의 패스워드가 일치하지 않습니다.");
+            return "signup_form";
+        }
+
+        userService.create(userCreateForm.getUsername(), 
+                userCreateForm.getEmail(), userCreateForm.getPassword1());
+
+        return "redirect:/";
+    }
+}
+```
+- /user/signup URL이 GET으로 요청되면 회원 가입을 위한 템플릿을 렌더링하고 POST로 요청되면 회원가입을 진행.
+- 회원 가입시 비밀번호1과 비밀번호2가 동일한지를 검증하는 로직을 추가. 만약 2개의 값이 일치하지 않을 경우에는 bindingResult.rejectValue를 사용하여 오류가 발생하게 함.
+- bindingResult.rejectValue의 각 파라미터는 bindingResult.rejectValue(필드명, 오류코드, 에러메시지)를 의미하며 여기서 오류코드는 일단 "passwordInCorrect"로 정의.
+
+<hr>
+
+**회원가입 템플릿**
+`signup_form`
+```html
+   <!-- 여기부터 시작 -->
+      <div class="my-3 border-bottom">
+        <div>
+          <h4>회원가입</h4>
+        </div>
+      </div>
+      <form th:action="@{/user/signup}" th:object="${userCreateForm}" method="post">
+        <div th:replace="layout::formErrors"></div>
+        <div class="mb-3">
+          <label for="username" class="form-label">사용자ID</label>
+          <input type="text" th:field="*{username}" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label for="password1" class="form-label">비밀번호</label>
+          <input type="password" th:field="*{password1}" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label for="password2" class="form-label">비밀번호 확인</label>
+          <input type="password" th:field="*{password2}" class="form-control" />
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">이메일</label>
+          <input type="email" th:field="*{email}" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">회원가입</button>
+      </form>
+```
+- 회원가입을 위한 "사용자 ID", "비밀번호", "비밀번호 확인", "이메일"에 해당되는 input 엘리먼트를 추가.
+- <회원가입> 버튼을 누르면 폼 데이터가 POST 방식으로 /user/signup/ URL로 전송됨.
+
+**내비게이션 바에 회원가입 링크 추가하기**
+`layout.html`
+```html
+ <li class="nav-item">
+              <a class="nav-link" th:href="@{/user/signup}">회원가입</a>
+            </li>
+```
+
+![pass](https://github.com/user-attachments/assets/d377bec5-ce4a-4578-acb6-ad0e307c25ca)
+
+**중복 회원가입 처리**
+`UserController`
+```spring
+try {
+			userService.create(userCreateForm.getUsername(), userCreateForm.getEmail(), userCreateForm.getPassword1());
+		} catch (DataIntegrityViolationException e) {
+			e.printStackTrace();
+			bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");
+			return "signup_form";
+		} catch (Exception e) {
+			e.printStackTrace();
+			bindingResult.reject("signupFailed", e.getMessage());
+			return "signup_form";
+		}
+```
+- 사용자ID 또는 이메일 주소가 동일할 경우에는 DataIntegrityViolationException이 발생하므로 DataIntegrityViolationException 예외가 발생할 경우 "이미 등록된 사용자입니다."라는 오류를 화면에 표시하도록 했음.
+-  그리고 다른 오류의 경우에는 해당 오류의 메시지(e.getMessage())를 출력하도록 했음.
+- `bindingResult.reject(오류코드, 오류메시지)는 특정 필드의 오류가 아닌 일반적인 오류를 등록할때 사용한다.`
+
+![user](https://github.com/user-attachments/assets/5fe71cc9-c003-4a3f-9332-a74a70d9a145)
 
 
 
