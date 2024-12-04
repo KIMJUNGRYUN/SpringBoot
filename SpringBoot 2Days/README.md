@@ -35,8 +35,17 @@ public class Question {
     private List<Answer> answerList;
 }
 ```
-- 질문의 제목,내용, 작성일 등을 저장합니다.
-- 여러 답변(`Answer`)과 연결됩니다.
+**설명:**
+- 이 클래스는 질문 데이터를 데이터베이스 테이블에 매핑.
+- 주요 필드:
+      - `id`: 질문의 고유 식별자 (기본키).
+      - `subject`: 질문 제목.
+      - `content`: 질문 내용.
+      - `createDate`: 질문이 생성된 시간.
+      - `answerList`: 이 질문에 연결된 답변 목록. **일대다 관계**로 설정됨.
+- `@OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE):
+      - 이 질문이 삭제되면, 연결된 답변도 함께 삭제됨.
+<hr>
 
 **`Answer` 엔티티**
 ```java
@@ -57,7 +66,14 @@ public class Answer {
     private Question question;
 }
 ```
-- 특정 질문에 대한 답변 데이터를 저장합니다.
+- 이 클래스는 **답변 데이터**를 데이터베이스 테이블에 매핑.
+- 주요 필드:
+      - `id`: 답변의 고유 식별자(기본키).
+      - `content`: 답변 내용.
+      - `createDate`: 답변이 생성된 시간.
+      - `question`: 이 답변이 속한 질문과의 관게를 나타냄.
+- `@ManyToOne`:
+      - 여러 답변이 하나의 질문에 연결될 수 있는 관계를 정의.
 <hr>
 
 ### 2.컨트롤러
