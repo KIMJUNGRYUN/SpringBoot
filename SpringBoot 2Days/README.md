@@ -2,18 +2,10 @@
 ### 연습 소개
 이 프로젝트는 Spring Boot를 사용하여 구현한 간단한 Q&A (질문과 답변) 웹 애플리케이션입니다. 사용자는 질문을 작성하고, 다른 사용자가 답변을 추가할 수 있습니다. Thymeleaf를 사용하여 HTML 템플릿을 렌더링하고, Spring Data JPA로 데이터베이스와 상호작용합니다.
 
-### 주요 기능
-1. 질문 목록 조회
-2. 질문 상세 보기
-3. 질문 등록
-4. 답변 작성 및 조회
-5. 기본적인 예외 처리
-
 <hr>
 
-### 프로젝트 구조
-### 1. 엔티티 (Entity)
-**`Question` 엔티티**
+## 프로젝트의 주요 역할 및 코드 설명
+### 1.**`Question` 엔티티**
 ```java
 @Entity
 @Getter
@@ -47,7 +39,7 @@ public class Question {
       - 이 질문이 삭제되면, 연결된 답변도 함께 삭제됨.
 <hr>
 
-**`Answer` 엔티티**
+### 2.**`Question` 엔티티**
 ```java
 @Entity
 @Getter
@@ -76,7 +68,7 @@ public class Answer {
       - 여러 답변이 하나의 질문에 연결될 수 있는 관계를 정의.
 <hr>
 
-### 2.컨트롤러
+### 3.**`QuestionController`**
 `QuestionController`
 ```java
 @Controller
@@ -113,9 +105,21 @@ public class QuestionController {
     }
 }
 ```
-- 질문 목록 조회, 질문 상세 보기, 질문 등록 폼과 등록 처리를 담당합니다.
+**설명**:
+- `/list`:
+      - 질문 목록을 요청받고 서비스 계층에서 질문 데이터를 가져옴.
+      - `model.addAttrubute`로 데이터를 Thymeleaf 템플릿 (`q_list.html`)로 전달.
+- `/detail/{id}`:
+      - 특정 질문의 상세 내용을 표시함.
+      - URL 경로에서 `id` 값을 받아 질문을 조회한 뒤, `q_detail.html`로 데이터 전달함.
+- `/create`:
+      - 질문 작성 폼을 렌더링하거나 새 질문을 저장함.
+      - `@Valid`로 유효성을 검사하며, 실패 시 다시 폼 페이지를 반환함.
 
-`AnswerController`
+<hr>
+
+
+### 4.**`AnswerController`**
 ```java
 @Controller
 @RequestMapping("/answer")
@@ -133,10 +137,16 @@ public class AnswerController {
     }
 }
 ```
-- 특정 질문에 대한 답변 등록 요청을 처리합니다.
+**설명**:
+- 특정 질문에 답변을 추가하는 컨트롤러.
+- `/create/{id}`:
+      - URL에서 `{id}`를 받아 해당 질문을 조회함
+      - 답변의 내용 (`content`)을 받아와 `AnswerService`를 통해 저장함.
+      - 답변 등록 후, 다시 질문 상세 페이지로 리다이렉트함.
+
 <hr>
 
-### 3.서비스
+### 5.**`QuestionService`**
 `QuestionService`
 ```java
 @Service
@@ -158,9 +168,15 @@ public class QuestionService {
     }
 }
 ```
-- 질문 생성, 조회, 목록 가져오기 등의 비지니스 로직을 처리합니다.
+**설명**:
+- **서비스 계층**으로, 비지니스 로직을 처리함
+- `getList`:
+      - 모든 질문 데이터를 반환함.
+- `getQuestion`:
+      - `id`로 질문을 조회하며, 데이터가 없으면 `DataNotFoundException`을 발생시킴.
+<hr>
 
-`AnswerService`
+### 6.**`AnswerService`**
 ```java
 @Service
 public class AnswerService {
@@ -176,54 +192,39 @@ public class AnswerService {
     }
 }
 ```
-- 답변을 저장하는 로직을 처리합니다.
+**설명**:
+- 답변 데이터를 저장하는 역할을 합니다.
+- `create`:
+      - 새로운 답변 객체를 생성하고, 해당 질문에 연결하여 데이터베이스에 저장함.
 
 <hr>
 
-### 4.리포지토리
-`QuestionRepository`
+### 7.**`HTML 템플릿`**
+**질문 목록 (`q_list.html`)**
 ```java
-public interface QuestionRepository extends JpaRepository<Question, Integer> {
-    Question findBySubject(String subject);
-    List<Question> findBySubjectContaining(String subject);
-}
+<table class="table">
+    <thead>
+        <tr><th>번호</th><th>제목</th><th>작성일시</th></tr>
+    </thead>
+    <tbody>
+        <tr th:each="q : ${qList}">
+            <td th:text="${q.id}"></td>
+            <td><a th:href="@{/question/detail/${q.id}}" th:text="${q.subject}"></a></td>
+            <td th:text="${q.createDate}"></td>
+        </tr>
+    </tbody>
+</table>
+<a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
 ```
-`AnswerRepository`
-```java
-public interface AnswerRepository extends JpaRepository<Answer, Integer> {}
-```
+**설명**:
+- 모든 질문을 테이블 형식으로 출력함.
+- 제목을 클릭하면 질문 상세 페이지로 이동함
+- 질문 등록 버튼을 제공함
+
 <hr>
 
-### 5.템플릿
-`q_list.html` **(질문 목록)**
-```java
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="layout::head"></head>
-<body>
-<div class="container my-3">
-    <table class="table">
-        <thead class="table-dark">
-        <tr>
-            <th>번호</th>
-            <th>제목</th>
-            <th>작성일시</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="q, loop : ${qList}">
-            <td th:text="${loop.count}"></td>
-            <td><a th:href="@{/question/detail/__${q.id}__}" th:text="${q.subject}"></a></td>
-            <td th:text="${#temporals.format(q.createDate, 'yyyy-MM-dd HH:mm')}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
-</div>
-</body>
-</html>
-```
-`q_detail.html` **(질문 상세 보기)**
+
+**질문 상세 (`q_detail.html`)**
 ```java
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
@@ -240,4 +241,8 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {}
 </body>
 </html>
 ```
+**설명**:
+- 질문의 제목과 내용을 출력함
+- 새로운 답변을 입력할 수 있는 폼을 제공.
+- 
 <hr>
