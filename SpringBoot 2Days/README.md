@@ -107,14 +107,14 @@ public class QuestionController {
 ```
 **설명**:
 - `/list`:
-      - 질문 목록을 요청받고 서비스 계층에서 질문 데이터를 가져옴.
-      - `model.addAttrubute`로 데이터를 Thymeleaf 템플릿 (`q_list.html`)로 전달.
+  - 질문 목록을 요청받고 서비스 계층에서 질문 데이터를 가져옴.
+  - `model.addAttrubute`로 데이터를 Thymeleaf 템플릿 (`q_list.html`)로 전달.
 - `/detail/{id}`:
-      - 특정 질문의 상세 내용을 표시함.
-      - URL 경로에서 `id` 값을 받아 질문을 조회한 뒤, `q_detail.html`로 데이터 전달함.
+  - 특정 질문의 상세 내용을 표시함.
+  - URL 경로에서 `id` 값을 받아 질문을 조회한 뒤, `q_detail.html`로 데이터 전달함.
 - `/create`:
-      - 질문 작성 폼을 렌더링하거나 새 질문을 저장함.
-      - `@Valid`로 유효성을 검사하며, 실패 시 다시 폼 페이지를 반환함.
+  - 질문 작성 폼을 렌더링하거나 새 질문을 저장함.
+  - `@Valid`로 유효성을 검사하며, 실패 시 다시 폼 페이지를 반환함.
 
 <hr>
 
@@ -140,9 +140,9 @@ public class AnswerController {
 **설명**:
 - 특정 질문에 답변을 추가하는 컨트롤러.
 - `/create/{id}`:
-      - URL에서 `{id}`를 받아 해당 질문을 조회함
-      - 답변의 내용 (`content`)을 받아와 `AnswerService`를 통해 저장함.
-      - 답변 등록 후, 다시 질문 상세 페이지로 리다이렉트함.
+  - URL에서 `{id}`를 받아 해당 질문을 조회함
+  - 답변의 내용 (`content`)을 받아와 `AnswerService`를 통해 저장함.
+  - 답변 등록 후, 다시 질문 상세 페이지로 리다이렉트함.
 
 <hr>
 
@@ -171,9 +171,9 @@ public class QuestionService {
 **설명**:
 - **서비스 계층**으로, 비지니스 로직을 처리함
 - `getList`:
-      - 모든 질문 데이터를 반환함.
+  - 모든 질문 데이터를 반환함.
 - `getQuestion`:
-      - `id`로 질문을 조회하며, 데이터가 없으면 `DataNotFoundException`을 발생시킴.
+  - `id`로 질문을 조회하며, 데이터가 없으면 `DataNotFoundException`을 발생시킴.
 <hr>
 
 ### 6.**`AnswerService`**
@@ -195,7 +195,7 @@ public class AnswerService {
 **설명**:
 - 답변 데이터를 저장하는 역할을 합니다.
 - `create`:
-      - 새로운 답변 객체를 생성하고, 해당 질문에 연결하여 데이터베이스에 저장함.
+  - 새로운 답변 객체를 생성하고, 해당 질문에 연결하여 데이터베이스에 저장함.
 
 <hr>
 
@@ -244,5 +244,5 @@ public class AnswerService {
 **설명**:
 - 질문의 제목과 내용을 출력함
 - 새로운 답변을 입력할 수 있는 폼을 제공.
-- 
+
 <hr>
