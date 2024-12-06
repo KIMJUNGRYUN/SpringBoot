@@ -93,6 +93,8 @@ public enum UserRole {
 - **ADMIN**은 `"ROLE_ADMIN"`, **USER**는 `"ROLE_USER"` 라는 값을 가지도록 했다
 - 상수 자료형이므로 `@Setter`없이 `@Getter`만 사용가능하도록 했다.
 
+<hr>
+
 **UserSecurityService**
 - 스프링 스큐리티 설정 등록할 서비스
 ```spring
@@ -124,7 +126,9 @@ public class UserSecurityService implements UserDetailsService {
 - 스프링 시큐리티에 등록하여 사용할 **UserSecurityService**는 스프링 시큐리티가 제공하는 **UserDetailsService** 인터페이스를 구현(implements)해야 한다.
 - **loadUserByUsername** 메서드를 구현하도록 강제하는 인터페이스이다. **loadUserByUsername** 메서드는 사용자명으로 비밀번호를 조회하여 리턴하는 메서드이다.
 
-SecurityConfig
+<hr>
+
+`SecurityConfig`
 - 스프링 시큐리티에 UserSecurityService 등록
 ```spring
 @Autowired
@@ -147,6 +151,8 @@ SecurityConfig
                 </li>
 ```
 ![Login2](https://github.com/user-attachments/assets/253a9989-704b-461e-bd6c-4426a16d786b)
+
+<hr>
 
 
 **로그인/로그아웃 링크**
@@ -172,6 +178,8 @@ SecurityConfig
 
 - 로그아웃 링크는 /user/logout으로 지정했다. 하지만 로그아웃 기능은 아직 구현하지 않은 상태이다. 로그아웃 기능은 바로 이어서 진행한다.
 
+<hr>
+
 **로그아웃 구현하기**
 - 스프링 시큐리티를 사용하여 구현
 
@@ -186,6 +194,8 @@ SecurityConfig
 - 로그아웃을 위한 설정을 추가
 - 로그아웃 URL을 /user/logout으로 설정하고 로그아웃이 성공하면 루트(/) 페이지로 이동하도록 했다
 - 로그아웃시 생성된 사용자 세션도 삭제하도록 처리했다.
+
+<hr>
 
 **엔티티 변경 글쓴이 추가**
 - Question과 Answer 엔티티에 "글쓴이"에 해당되는 author 속성을 추가
@@ -218,6 +228,8 @@ public class Answer {
 
 -  이 컬럼에는 site_user 테이블의 id 값이 저장되어 **SiteUser** 엔티티와 연결된다
 
+<hr>
+
 **author 저장**
 - Question, Answer 엔티티에 author 속성이 추가되었으므로 질문과 답변 저장시에 author도 함께 저장할 수 있다.
 
@@ -229,6 +241,8 @@ public class Answer {
         (... 생략 ...)
     }
 ```
+
+<hr>
 
 **UserService 추가**
 ```spring
@@ -242,6 +256,8 @@ public class Answer {
     }
 ```
 - UserRepository에 이미 findByusername을 선언했으므로 쉽게 만들수 있음.
+
+<hr>
 
 **AnswerService 수정**
 ```spring
@@ -275,6 +291,8 @@ public class Answer {
 	}
 ```
 - principal 객체를 통해 사용자명을 얻은 후에 사용자명을 통해 SiteUser 객체를 얻어서 답변을 등록하는 AnswerService의 create 메서드에 전달하여 답변을 저장 하도록 함.
+
+<hr>
 
 **질문에 작성자 저장하기**
 `QuestionService`
@@ -311,6 +329,8 @@ public void create(String subject, String content, SiteUser user) {
 ```spring
 this.qService.create(subject, content, null);
 ```
+
+<hr>
 
 **로그인이 필요한 메서드**
 ![error](https://github.com/user-attachments/assets/dcb2ea9c-1d63-43e6-9b2a-a01688b1e34b)
@@ -352,6 +372,7 @@ public class SecurityConfig {
     (... 생략 ...)
 }
 ```
+<hr>
 
 **disabled**
 - 답변 등록은 로그아웃 상태에도 글을 작성할 수 있게 보여질 수 있어 답변을 못하게 disabled 속성 적용.
@@ -449,6 +470,8 @@ public class Answer {
 ```
 
 ![users](https://github.com/user-attachments/assets/278b1b8f-fe94-44fc-9a65-091887c4e357)
+
+<hr>
 
 **질문 수정**
 - 작성한 질문을 수정하려면 질문 상세 화면에서 "수정" 버튼을 클릭하여 수정 화면으로 진입해야 한다.
