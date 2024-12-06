@@ -19,8 +19,8 @@
         ;
         return http.build();
 ```
-- 로그인 페에지의 URL은 `/user/login이다
-  - 로그인 성공시에 이동하는 default 페이지는 루티 URL(/)임을 의미.
+- 로그인 페에지의 **URL**은 `/user/login`이다
+  - 로그인 성공시에 이동하는 **default** 페이지는 루티 `URL(/)`임을 의미.
 
 **UserController**
 - 스프링 시큐리티에 로그인 URL을 /user/login으로 설정했으니 `User Controller`에 해당 매핑 추가
