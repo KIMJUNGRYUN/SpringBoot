@@ -113,6 +113,9 @@ public Page<Question> getList(int page){
 ```
 - 기존에 전달했던 이름인 "questionList" 대신 "paging" 이름으로 템플릿에 전달했기 때문에 템플릿도 다음과 같이 변경해야 한다
 
+<hr>
+
+
 **템플릿에 페이지 이동 기능 구현**
 - 질문 목록에서 페이지를 이동하려면 페이지를 이동할 수 있는 "이전", "다음" 과 같은 링크가 필요하다.
 ```html
@@ -144,6 +147,8 @@ public Page<Question> getList(int page){
 - 이전 페이지가 없는 경우에는 "이전" 링크가 비활성화(disabled)되도록 하였다. (다음페이지의 경우도 마찬가지 방법으로 적용했다.) 
 - 페이지 리스트를 루프 돌면서 해당 페이지로 이동할 수 있는 링크를 생성하였다
 
+<hr>
+
 **템플릿에 사용된 주요 페이징 기능을 표로 정리**
 
 ![table](https://github.com/user-attachments/assets/6c696c40-e879-47e6-a003-446a8f6cd89a)
@@ -159,6 +164,8 @@ public Page<Question> getList(int page){
 - `th:if="${page >= paging.number-5 and page <= paging.number+5}"` 이 코드는 페이지 리스트가 현재 페이지 기준으로 좌우 5개씩 보이도록 만든다.
 
 
+<hr>
+
 **작성일시 역순으로 조회하기**
 
 `QuestionService`
@@ -171,16 +178,25 @@ public Page<Question> getList(int page){
 ```
 - 게시물을 역순으로 조회하기 위해서는 위와 같이 `PageRequest.of` 메서드의 세번째 파라미터로 `Sort` 객체를 전달
 
+
+<hr>
+
+
 **게시물 번호가 1부터 시작되는 문제**
 `게시물 번호 공식 만들기`
 - 번호 = 전체 게시물 개수 - (현재페이지 * 페이지당 게시물 개수) - 나열 인덱스
 
 ![index](https://github.com/user-attachments/assets/74bde841-fa3e-42d4-80cc-19553dae00fa)
+
+<hr>
+
 **게시물 번호 공식을 질문 목록 템플릿에 적용하기**
 ```html
 <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
 ```
 ![sort](https://github.com/user-attachments/assets/b5c70ca5-09ab-4ba9-bb8f-8ae21116250b)
+
+<hr>
 
 **질문에 달린 답변 개수 표시**
 `Question_list.html`
@@ -197,6 +213,8 @@ public Page<Question> getList(int page){
 - `th:text="${#lists.size(question.answerList)}"`로 답변 개수를 표시했다.
 
 ![num](https://github.com/user-attachments/assets/83819500-4e3e-4c31-9c6f-2cc541f2ea9e)
+
+<hr>
 
 <hr>
 
@@ -232,6 +250,8 @@ public class SecurityConfig {
 - `@EnableWebSecurity 애너테이션을 사용하면 내부적으로 SpringSecurityFilterChain이 동작하여 URL 필터가 적용된다.`
 - 스프링 시큐리티의 세부 설정은 `SecurityFilterChain 빈`을 생성하여 설정할 수 있다
 
+<hr>
+
 **스프링 시큐리티가 CSRF 처리시 H2 콘솔은 예외로 처리할 수 있도록**
 ```spring
  http
@@ -247,6 +267,8 @@ public class SecurityConfig {
 ```
 
 - 위 처럼 URL 요청시 `X-Frame-Options` 헤더값을 `sameorigin`으로 설정하여 오류가 발생하지 않도록 했다.
+
+<hr>
 
 **회원가입 페이지**
 `회원정보 엔티티`
@@ -302,6 +324,8 @@ public interface UserRepository extends JpaRepository<SiteUser, Long> {
     }
 ```
 - **BCryptPasswordEncoder** 객체를 직접 생성하여 사용하지 않고 빈으로 등록한 **PasswordEncoder** 객체를 주입받아 사용하도록 수정했다.
+
+<hr>
 
 **회원가입 폼**
 `UserCreateForm`
@@ -402,6 +426,8 @@ public class UserController {
 ```
 - 회원가입을 위한 "사용자 ID", "비밀번호", "비밀번호 확인", "이메일"에 해당되는 input 엘리먼트를 추가.
 - <회원가입> 버튼을 누르면 폼 데이터가 POST 방식으로 /user/signup/ URL로 전송됨.
+
+<hr>
 
 **내비게이션 바에 회원가입 링크 추가하기**
 `layout.html`
