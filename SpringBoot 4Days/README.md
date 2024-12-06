@@ -1,7 +1,7 @@
 # Spring Boot 연습(sbb)
 
 **Login**
-- 스프링 스큐리티 사용
+- `스프링 스큐리티 사용`
 
 **로그인 URL**
 ```spring
