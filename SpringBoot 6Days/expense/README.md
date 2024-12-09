@@ -390,4 +390,7 @@ VALUES("zsfixefe", "수도 요금", "우리집 한달 수도 비용", 15000, cur
     }
 ```
 
+![비여ㅛㅇ리스트](https://github.com/user-attachments/assets/4f2cc302-d865-43aa-a92c-7e55b25c23a8)
+
+
 
