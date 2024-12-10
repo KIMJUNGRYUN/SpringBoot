@@ -48,6 +48,7 @@ private Expense mapToEntity(ExpenseDTO expenseDTO) {
 ```
 
 `유틸클래스를 이용하여 service의 mapToEntity메서드 완성`
+
 ```spring
 private Expense mapToEntity(ExpenseDTO expenseDTO) {
 		Expense expense = modelMapper.map(expenseDTO, Expense.class);
@@ -60,6 +61,7 @@ private Expense mapToEntity(ExpenseDTO expenseDTO) {
 ```
 
 `DB에 저장하고 다시 DTO로 변환`
+
 ```spring
 public ExpenseDTO saveExpenseDetails(ExpenseDTO expenseDTO) {
 		//1. DTO => Entity
