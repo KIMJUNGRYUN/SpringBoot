@@ -91,7 +91,8 @@ public ExpenseDTO saveExpenseDetails(ExpenseDTO expenseDTO) {
 <hr>
 
 **expenseid 값(유니크)으로 삭제 링크**
-``html
+
+```html
 <td>
 						<a th:href="@{/deleteExpense(id=${expense})}">삭제</a>
 					</td>
@@ -131,6 +132,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 - 응답 결과가 여러건인 경우에는 리포짙터리 메서드의 리턴 타입을 **Question**이 아닌 **List<Question>**으로 해야 한다.
 
 <hr>
+
 **서비스**
 ```spring
 //비용 id(ExpenseId)로 삭제하기
@@ -142,6 +144,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 ```
 
 `이 서비스 메서드를 삭제 컨트롤러에서 호출`
+
 ```spring
 @GetMapping("/deleteExpense")
 	public String deleteExpense(@RequestParam String id) {
@@ -157,6 +160,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 <hr>
 
 **삭제시 확인 메세지 나오게 하기**
+
 ```script
 <a onclick="return confirm('정말로 삭제할까요?')" th:href="@{/deleteExpense(id=${exp.expenseId})}">삭제</a>
 ```
