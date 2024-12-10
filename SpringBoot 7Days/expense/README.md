@@ -363,7 +363,7 @@ public class ExpenseFilterDTO {
 ```html
 method="get" th:object="${filter}"
 ```
-`메소드는 GET으로 검색어는 주소창에 나와도 됨
+`메소드는 GET으로 검색어는 주소창에 나와도 됨`
 ```html
 th:action="@{/filterExpenses}"
 ```
