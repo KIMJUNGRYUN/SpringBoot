@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Manager</title>
+</head>
+<body>
+<h1>비용 리스트</h1>
+<hr />
+<h2>당신이 사용한 비용은 총 <span th:text="|${#numbers.formatInteger(total,0,'COMMA')}|"></span>원 입니다!</h2>
+<form th:object="${filter}" th:action="@{/filterExpenses}">
+  키워드 검색 : <input type="text" th:field="*{keyword}" placeholder="키워드 입력"/>
+  <!-- 정렬 -->
+  <select th:field="*{sortBy}">
+    <option value="date">날짜</option>
+    <option value="amount">가격</option>
+  </select>
+  <input type="date" th:field="*{startDate}" />
+  <input type="date" th:field="*{endDate}" />
+  <input type="submit" value="검색">
+</form>
+<div>
+  <a th:href="@{/createExpense}">새 비용</a>
+</div>
+<table border="1">
+  <thead>
+  <th>이름</th>
+  <th>설명</th>
+  <th>요금</th>
+  <th>날짜</th>
+  <th>액션</th>
+  </thead>
+  <tbody>
+  <tr th:each="exp : ${expenses}">
+    <td th:text="${exp.name}"></td>
+    <td th:text="${exp.description}"></td>
+    <td th:text="|${#numbers.formatInteger(exp.amount,0,'COMMA')}원|"></td>
+    <td th:text="${exp.getDateString()}"></td>
+    <td>
+      <!-- ( ) 안에 값은 파라매터 값-->
+      <a onclick="return confirm('정말로 삭제할까요?')" th:href="@{/deleteExpense(id=${exp.expenseId})}">삭제</a>
+      |
+      <a th:href="@{/updateExpense(id=${exp.expenseId})}">수정</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

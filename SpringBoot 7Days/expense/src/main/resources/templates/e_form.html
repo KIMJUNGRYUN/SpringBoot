@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense 만들기</title>
+</head>
+<body>
+<h1 th:if="${expense.id == null}">새 비용 만들기</h1>
+<h1 th:if="${expense.id != null}">비용 수정하기</h1>
+<hr />
+<form th:object="${expense}" th:action="@{/saveOrUpdateExpense}" action="" method="post">
+  <input type="text" th:field="*{name}" placeholder="이름 입력" />
+  <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+  <br /><br />
+  <input type="number" th:field="*{amount}" placeholder="비용 입력" />
+  <span th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></span>
+  <br /><br />
+  <input type="date" required th:field="*{dateString}" />
+  <br /><br />
+  <textarea rows="5" th:field="*{description}" placeholder="설명 입력"></textarea>
+  <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+  <br /><br />
+  <button type="submit" th:text="${expense.id} == null? '저장' : '수정'"></button>
+
+  <input type="hidden" th:field="*{id}"/>
+  <input type="hidden" th:field="*{expenseId}"/>
+
+</form>
+<a th:href="@{/expenses}">돌아가기</a>
+</body>
+</html>
