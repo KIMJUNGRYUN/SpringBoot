@@ -14,6 +14,7 @@ public ExpenseDTO saveExpenseDetails(ExpenseDTO expenseDTO) {
 		return null;
 	}
 ```
+
 ```spring
 private Expense mapToEntity(ExpenseDTO expenseDTO) {
 		Expense expense = modelMapper.map(expenseDTO, Expense.class);
@@ -23,12 +24,14 @@ private Expense mapToEntity(ExpenseDTO expenseDTO) {
 		return null;
 	}
 ```
+
 ```spring
 //1. expenseId 입력 ( 유니크 문자열 자동생성 )
 		expense.setExpenseId(UUID.randomUUID().toString());
 ```
 
 `유틸패키지 DateTimeUtil`
+
 ```spring
    //자바 날짜 date 를 문자열 포맷으로 변환하는 스태틱 메서드
     public static String convertDateString(Date date){
@@ -43,6 +46,7 @@ private Expense mapToEntity(ExpenseDTO expenseDTO) {
         return new Date(date.getTime());
     }
 ```
+
 `유틸클래스를 이용하여 service의 mapToEntity메서드 완성`
 ```spring
 private Expense mapToEntity(ExpenseDTO expenseDTO) {
@@ -105,6 +109,7 @@ public ExpenseDTO saveExpenseDetails(ExpenseDTO expenseDTO) {
 - 삭제를 하기위해 먼저 id로 삭제할 expense 를 찾아오기.
 - 유니크값인 expenseId로 찾기위한 메소드 만들기
 - Optinal로 리턴하면 찾지 못했을때는 제외할 수 있음.
+
 ```spring
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
