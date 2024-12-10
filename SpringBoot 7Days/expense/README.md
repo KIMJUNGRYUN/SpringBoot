@@ -405,6 +405,7 @@ public List<ExpenseDTO> getFilterExpenses(String keyword){
 ```
 
 -필터 컨트롤러
+
 `우선 서비스객체를 사용하기 위해 주입.`
 ```spring
 @Controller
@@ -444,6 +445,7 @@ public class ExpenseFilterDTO {
 
 - 리스트
 `검색버튼 위에 옵션 태그 추가`
+
 ```html
 <select th:field="*{sortBy}">
 				<option value="date">날짜</option>
@@ -456,6 +458,7 @@ public class ExpenseFilterDTO {
 ![sort](https://github.com/user-attachments/assets/47a96b91-520a-498d-9351-89ec080a7bdf)
 
 - 서비스에 sortBy를 추가해서 메서드 만들기
+
 ```spring
 	public List<ExpenseDTO> getFilterExpenses(String keyword, String sortBy){
 		List<Expense> list = expRepo.findByNameContaining(keyword);
@@ -468,6 +471,8 @@ public class ExpenseFilterDTO {
 		return filterlist;
 	}
 ```
+
+
 ```spring
 if (sortBy.equals("date")) {
 			filterlist.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
@@ -477,6 +482,8 @@ if (sortBy.equals("date")) {
 ```
 
 - 필터컨트롤러 (에러처리)
+
+
 ```spring
 expService.getFilterExpenses(expenseFilterDTO.getKeyword(), getAmount());
 ```
