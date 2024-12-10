@@ -129,7 +129,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 `커스텀 메소드 이름 작성 방법`
 
 ![METHOD](https://github.com/user-attachments/assets/f3b2d31c-8a07-4d24-87f2-70a7bd005edf)
-- 응답 결과가 여러건인 경우에는 리포짙터리 메서드의 리턴 타입을 **Question**이 아닌 **List<Question>**으로 해야 한다.
+- 응답 결과가 여러건인 경우에는 리포짙터리 메서드의 리턴 타입을 **Question** 이 아닌 **List<Question>**으로 해야 한다.
 
 <hr>
 
