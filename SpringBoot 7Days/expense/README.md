@@ -166,6 +166,7 @@ public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
 **수정(업데이트) 링크**
 `테이블에 수정 링크를 만들기`
+
 ```html
 <td>
 	<a onclick="return confirm('정말로 삭제할까요?')" 	th:href="@{/deleteExpense(id=${exp.expenseId})}">삭제</a>
