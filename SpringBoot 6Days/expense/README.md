@@ -392,5 +392,110 @@ VALUES("zsfixefe", "수도 요금", "우리집 한달 수도 비용", 15000, cur
 
 ![비여ㅛㅇ리스트](https://github.com/user-attachments/assets/4f2cc302-d865-43aa-a92c-7e55b25c23a8)
 
+**새로운 비용 만들기**
+`e_list.html`
+`새 비용 링크 만들기(localhost:8080/createExpense)`
+```html
+<h1>비용 리스트</h1>
+		<hr />
+		<div>
+			<a th:href="@{/createExpense}">새 비용</a>
+		</div>
+		<table border="1">
+```
 
+![list](https://github.com/user-attachments/assets/6877ec3b-c3d5-462c-8514-291e8d138e83)
 
+`새 비용 컨트롤러`,`localhost:8080/createExpense)
+```spring
+
+@GetMapping("/﻿createExpense")
+	public String createExpense() {
+		return "expense-form";
+	}
+```
+
+`expense-form`
+```html
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Expense 만들기</title>
+	</head>
+	<body>
+		<h1>새 비용 만들기</h1>
+		<hr />
+	</body>
+</html>
+```
+
+![list1](https://github.com/user-attachments/assets/a2bb6878-c2a1-406d-92fd-6560426c33ed)
+![list2](https://github.com/user-attachments/assets/9a8d8f37-460e-4f86-b4e1-34429b54e29b)
+
+**비용 입력 폼(form)과 dto 바인딩**
+```html
+<h1>새 비용 만들기</h1>
+		<hr />
+		<form action="">
+			<input type="text" placeholder="이름 입력" />
+			<br /><br />
+			<input type="number" placeholder="비용 입력" />
+			<br /><br />
+			<input type="date" />
+			<br /><br />
+			<textarea rows="5" placeholder="설명 입력"></textarea>
+			<br /><br />
+			<button type="submit">Submit</button>
+		</form>
+```
+
+![new](https://github.com/user-attachments/assets/10164d54-9089-42fb-8342-454d25951772)
+
+`컨트롤러에서 뷰에 object 전달`
+```spring
+@GetMapping("/createExpense")
+	public String createExpense(Model model) {
+		model.addAttribute("expense", new ExpenseDTO());
+		return "expense-form";
+	}
+```
+
+`타임리프 form에 객체를 미리 바인딩`
+```html
+		<form th:object="${?}">
+			<input type="text" th:field="*{name}" placeholder="이름 입력" />
+			<br /><br />
+			<input type="text" th:field="*{?}" placeholder="비용 입력" />
+			<br /><br />
+			<input type="date" th:field="*{?}" />
+			<br /><br />
+			<textarea rows="5" th:field="*{?}" placeholder="설명 입력"></textarea>
+			<br /><br />
+			<button type="submit">Submit</button>
+		</form>
+```
+
+`submit(전송)버튼 구현`
+
+```html
+<form th:action="@{/saveOrUpdateExpense}"  method="post"
+```
+
+`form의 action 주소로 요청`
+
+```spring
+@PostMapping("/saveOrUpdateExpense")
+	public String saveOrUpdateExpense(@ModelAttribute("expense") ExpenseDTO expenseDTO) {
+		System.out.println("입력한 expenseDTO 객체 : " + expenseDTO);
+		return "redirect:/expenses";
+	}
+
+![list3](https://github.com/user-attachments/assets/169e9898-61cf-4400-b664-216872a0ac1f)
+
+```
+
+```html
+입력한 `expenseDTO` 객체 : `ExpenseDTO(id=null`, `expenseId=null`, `name=교통비`, `description=한달 교통비`, `amount=75000`, `date=null`, `dateString=2023-06-17)`
+```
