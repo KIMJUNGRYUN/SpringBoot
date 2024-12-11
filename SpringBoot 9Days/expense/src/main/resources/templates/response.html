@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>에러 페이지</title>
+</head>
+<body>
+<div th:if="${notfound}">
+  <h1>서비스를 이용할 수 없습니다</h1>
+  <p th:text="${message}"></p>
+  <a th:href="@{/expenses}">Back to Home</a>
+</div>
+
+<div th:if="${serverError}">
+  <h1>관리자에게 문의해 주세요</h1>
+  <p th:text="${message}"></p>
+  <a th:href="@{/expenses}">Back to Home</a>
+</div>
+
+<div th:if="${successMsg}" >
+  <h1>가입성공!</h1>
+  <p>가입해 주셔서 감사합니다. 이제 당신의 비용관리를 시작하세요!</p>
+  <a th:href="@{/login}">로그인</a>
+</div>
+</body>
+</html>
+
+
