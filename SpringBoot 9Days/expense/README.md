@@ -249,3 +249,181 @@ return new org.springframework.security.core.userdetails.User(
 ```
 
 ![logout2](https://github.com/user-attachments/assets/fb433874-b9bc-4a3c-84f2-cf0d5c8ab164)
+
+<hr>
+
+**유저와 비용과의 관계**
+- 프로젝트의 엔티티 User, Expense 는 어떤 관계로 나타낼수 있나?
+
+![many](https://github.com/user-attachments/assets/7eda4738-961c-43f6-a54f-f9b582c17cf5)
+
+- 유저-비용 과의 관계는 One to Many 이며 비용에 유저id를 외래키로 넣으면 어떤 비용이 발생했을때 누가 썻는지 알 수 있다.
+
+`Expense에 유저id(Unique key)추가
+
+```spring
+@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+```
+
+- 테이블 구조가 달라졌으므로 2개의 테이블을 워크벤치를 이용해 Drop 하고 새로 프로젝트를 시작하면 JPA 하이버네이트가 자동으로 테이블을 생성한다.
+
+![table2](https://github.com/user-attachments/assets/d1b742eb-3058-4a64-bbc8-ce913373f4b9)
+
+<hr>
+
+**로그인된 유저의 정보 가져오기**
+- 시큐리티의 인증에 성공하게 되면 (로그인 화면) 로그인한 유저의 정보를 가져오는 메서드를 서비스에 만들기.
+
+`UserService`
+
+```spring
+	public User getLoggedInUser() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String loginUserEmail = auth.getName();
+		return userRepo.findByEmail( ? ).orElseThrow(()-> 
+					new UsernameNotFoundException("이메일을 찾을수 없습니다"));
+	}
+```
+
+- 서비스 메서드를 이용해서 `Expense`객체를 DB에 저장할때 유저 Id를 입력.
+
+`ExpenseService`
+
+```spring
+private 유저서비스 객체를 주입
+...
+	public ExpenseDTO saveExpenseDetails(ExpenseDTO expenseDTO) throws ParseException {
+		// 1. DTO => Entity
+		Expense expense = mapToEntity(expenseDTO);
+		expense.setUser(?);
+		// 2. DB에 저장
+		expense = expRepo.save(expense);
+		// 3. Entity => DTO
+		return mapToDTO(expense);
+	}
+```
+
+<hr>
+
+**로그인한 유저의 비용들만 보여주기**
+`ExpenseRepository`
+- Expense 테이블을 검색할때 userId(컬럼 user_id)로 검색 findBy + userId => findByUserId(카멜 케이스)
+
+```spring
+//SELECT * FROM tbl_expense WHERE user_id = ?
+	List<Expense> findByUserId(Long id);
+```
+
+`ExpenseService`
+
+```spring
+	public List<ExpenseDTO> getAllExpenses() {
+		User user = uService.getLoggedUser();
+		List<Expense> list = expRepo.findByUserId (user.getId());
+		List<ExpenseDTO> listDTO = list.stream().map(this::mapToDTO).collect(Collectors.toList());
+		return listDTO;
+	}
+```
+
+- 로그인한 유저가 작성한 `Expense`만 나옴
+
+![login9](https://github.com/user-attachments/assets/14d45991-f6e5-4a44-b8a3-9a50d8bba442)
+
+<hr>
+
+**키워드 기간 검색**
+- /expenses는 로그인 된 유저별 리스트가 나오는데 만약 키워드나 기간 검색을 한다면 다시 모든 리스트가 나옴.
+
+![list7](https://github.com/user-attachments/assets/2816933c-cfca-44e0-a2b8-ffb28fd4dc73)
+
+- 이전에 만들어 놓았던 리포지토리에 키워드 기간 조건 검색 문제
+
+```spring
+List<Expense> findByNameContainingAndDateBetween(String keyword, Date startDate, Date endDate);
+```
+
+- 여기에 user_id 가 추가되어야 한다.그러므로 + AndUserId ( ... , Long id )  를 추가한다.
+  - 이제 이 메소드를 호출하는 서비스에 가서 수정.
+
+`ExpenseService`
+
+```spring
+//유저객체를 가져오기
+
+List<Expense> list = expRepo.findByNameContainingAndDateBetweenAndUserId(keyword, startDay, endDay, user.getId());
+```
+
+<hr>
+
+**Whitelabel Error Page 대체**
+- 주소 입력이 잘못될 경우 화면에 오류가 표시됨.
+
+![error1](https://github.com/user-attachments/assets/e6e7899f-d1dd-481b-958f-e11eddab4f0d)
+
+- 스프링부트 어플리케이션프로퍼티 세팅이 없어도 기본적으로 서버에러 발생시 화이트라벨페이지 표시됨(이것을 없앨때 false로 함)
+
+```spring
+server.error.whitelabel.enabled=true (디폴트값)
+```
+
+[Uploading 404<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>404 Not Found</title>
+<meta name="description" content="404 Not Found">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+</head>
+<body class="py-5" onload="javascript:loadDomain();">
+<!-- Error Page Content -->
+<div class="container">
+    <div class="hero text-center my-4">
+        <h1 class="display-5"><i class="bi bi-emoji-dizzy text-danger mx-3"></i></h1>
+        <h1 class="display-5 fw-bold">404 Not Found</h1>
+        <p class="lead">We couldn't find what you're looking for on <em><span id="display-domain"></span></em>.
+        </p>
+        <p><btn onclick=javascript:goToHomePage(); class="btn btn-outline-success btn-lg">Go to Homepage</a></btn>
+    </div>
+
+    <div class="content">
+        <div class="row  justify-content-center py-3">
+            <div class="col-md-6">
+                <div class="my-5 p-5 card">
+                    <h3>What happened?</h3>
+                    <p class="fs-5">A 404 error status implies that the file or page that you're looking for could not be found.</p>
+                </div>
+                <div class="my-5 p-5 card">
+                    <h3>What can I do?</h3>
+                    <p class="fs-4">If you're a site visitor</p>
+                    <p>Please use your browser's back button and check that you're in the right place. If you need immediate assistance, please send us an email instead.</p>
+                    <p class="fs-4">If you're the site owner</p>
+                    <p>Please check that you're in the right place and get in touch with your website provider if you believe this to be an error.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function loadDomain() {
+        var display = document.getElementById("display-domain");
+        display.innerHTML = document.domain;
+    }
+    // CTA button actions
+    function goToHomePage() {
+        window.location = '/';
+    }
+    function reloadPage() {
+        document.location.reload(true);
+    }
+</script>
+</body>
+</html>
+.html…]()
+
+
