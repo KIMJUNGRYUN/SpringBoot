@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인 페이지</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet" th:href="@{/css/base.css}" />
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
+<body>
+<div class="box-layout justify-content-center">
+    <div class="card box-layout__box text-center">
+        <div class="card-header border-bottom-0 pb-0 bg-white">
+            <h1 class="box-layout__title">비용 매니저</h1>
+            <p class="box-layout__title">당신의 비용들을 관리하세요</p>
+        </div>
+
+        <div class="card-body pt-0">
+            <form id="loginForm" th:action="@{/login}" method="post">
+                <div th:if="${param.error}">
+                    <div class="alert help-block">잘못된 이메일 또는 패스워드 입니다</div>
+                </div>
+                <div th:if="${param.logout}">
+                    <div class="alert help-block">로그아웃 되었습니다</div>
+                </div>
+                <input type="text" name="email" placeholder="이메일 입력" class="form-control mb-3" autofocus="autofocus" />
+
+                <input type="password" name="password" placeholder="패스워드 입력" class="form-control mb-3" />
+
+                <button type="submit" class="btn form-control button_default text">Login</button>
+            </form>
+        </div>
+
+        <div class="card-footer bg-white border-top-0">
+            <span class="float-right"> New User? - <a th:href="@{/register}" class="base-color font-weight-bold">가입하기</a> </span>
+        </div>
+    </div>
+</div>
+<a th:href="@{/register}">가입하기</a>
+<!--자바스크립트-->
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/jquery-validation.js}"></script>
+<script th:src="@{/js/login.js}"></script>
+<script th:src="@{/js/bootstrap.js}"></script>
+</body>
+
+</html>

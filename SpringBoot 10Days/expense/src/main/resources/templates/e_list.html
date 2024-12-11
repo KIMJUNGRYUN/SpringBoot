@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Manager</title>
+  <link rel="stylesheet" th:href="@{/css/bootstrap.css}" />
+  <link rel="stylesheet" th:href="@{/css/base.css}" />
+  <link rel="stylesheet" th:href="@{/css/expenses-list.css}" />
+</head>
+<body>
+<nav class="fixed-top bg-header-color py-4">
+  <div class="app-header">
+    <div class="d-flex justify-content-between align-items-center">
+      <a th:href="@{/expenses}" class="text-white">
+						<span class="font-size-medium font-weight-bold">
+								Expense Manager
+						</span>
+      </a>
+      <div>
+        <a th:href="@{/logout}" class="text-white font-size-small">로그아웃</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="main-content">
+  <div class="container-fluid bg-light py-4 mb-2">
+    <div class="app-header">
+      <h2 class="font-weight-light">
+        당신이 사용한 비용은 총 <span th:text="${expenses.size()}"></span>
+        개이고 <br>비용 합계는
+        <span th:text="|${#numbers.formatInteger(total,0,'COMMA')}원|"></span> 입니다.
+      </h2>
+      <div class="mt-4">
+        <a class="btn button_default text-white"
+           th:href="@{/createExpense}">새 비용 만들기</a>
+      </div>
+    </div>
+  </div>
+  <div class="app-header">
+    <form method="get" th:object="${filter}" th:action="@{/filterExpenses}">
+      <div class="row mb-2">
+
+        <div class="col-md-2 col-sm-6 col-12 mb-2">
+          <input type="text"
+                 placeholder="키워드 입력"
+                 autocomplete="off"
+                 th:field="*{keyword}"
+                 class="form-control"/>
+        </div>
+        <div class="col-md-2 col-sm-2 col-12 mb-2">
+          <select th:field="*{sortBy}" class="form-control">
+            <option value="date">날짜</option>
+            <option value="amount">가격</option>
+          </select>
+        </div>
+        <div class="col-md-3 col-sm-6 col-12 mb-2">
+          <input type="date"
+                 id="startDate"
+                 placeholder="Start date"
+                 th:field="*{startDate}"
+                 class="form-control" />
+        </div>
+        <div class="col-md-3 col-sm-6 col-12 mb-2">
+          <input type="date"
+                 id="endDate"
+                 placeholder="End date"
+                 th:field="*{endDate}"
+                 class="form-control"/>
+        </div>
+
+        <div class="col-md-2 col-sm-12 col-12">
+          <input type="submit" value="검색" class="btn button_default form-control"/>
+        </div>
+      </div>
+    </form>
+    <div class="card mb-4">
+      <div class="card-header card-background__header fw-bold">Expense
+        <span class="float-end fw-bold">Amount</span></div>
+      <table border="1">
+        <div class="border-bottom" th:each="expense: ${expenses}">
+          <a th:href="@{/updateExpense(id=${expense.expenseId})}">
+            <div class="d-flex flex-row justify-content-between align-items-center px-3 pt-4 pb-2">
+              <div>
+                <h3 class="text-capitalize text-dark" th:text="${expense.name}"></h3>
+                <span class="text-dark fst-italic" th:text="${expense.dateString}"></span>
+              </div>
+
+              <div>
+                <a th:href="@{/updateExpense(id=${expense.expenseId})}" class="btn btn-sm btn-primary">수정
+                  <a th:href="@{/deleteExpense(id=${expense.expenseId})}"
+                     onclick="return confirm('정말로 삭제할까요?')"
+                     class="btn btn-sm btn-danger">삭제</a>
+                </a>
+              </div>
+              <p class="text-dark font-size-xsmall badge rounded-pill bg-warning" th:text="|${#numbers.formatInteger(expense.amount,0,'COMMA')}원|"></p>
+            </div>
+          </a>
+        </div>
+      </table>
+    </div>
+  </div>
+</div>
+</div>
+<footer class="py-5">
+  <div class="container">
+    <p class="m-0 text-center text-dark">
+      Copyright &copy; Expense Manager - 2023
+    </p>
+  </div>
+</footer>
+</body>
+</html>
