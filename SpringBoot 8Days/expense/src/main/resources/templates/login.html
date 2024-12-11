@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인 페이지</title>
+</head>
+<body>
+<h1>로그인</h1>
+<hr />
+
+<div>
+    <form id="loginForm" th:action="@{/login}" method="post">
+        <div th:if="${param.error}">잘못된 이메일 또는 패스워드 입니다</div>
+        <div th:if="${param.logout}">로그아웃 되었습니다</div>
+        <input type="text" name="email" placeholder="이메일 입력" />
+        <br /><br />
+        <input type="text" name="password" placeholder="패스워드 입력" />
+        <br /><br />
+        <button type="submit">로그인</button>
+    </form>
+</div>
+<a th:href="@{/register}">가입하기</a>
+<!--자바스크립트-->
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/jquery-validation.js}"></script>
+<script th:src="@{/js/login.js}"></script>
+</body>
+</html>

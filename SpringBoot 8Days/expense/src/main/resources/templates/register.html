@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원 등록 페이지</title>
+</head>
+<body>
+<h1>회원 가입</h1>
+<hr />
+<form id="registerForm" th:object="${user}" th:action="@{/register}" method="post">
+    <input type="text" placeholder="이름 입력" th:field="*{name}" />
+    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+    <br /><br />
+    <input type="text" placeholder="이메일 입력" th:field="*{email}" />
+    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+    <br /><br />
+    <input type="password" placeholder="비밀번호 입력" th:field="*{password}" />
+    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+    <br /><br />
+    <input type="password" placeholder="비밀번호 확인" th:field="*{confirmPassword}" />
+    <br /><br />
+    <button type="submit">Submit</button>
+</form>
+<a th:href="@{/login}">로그인</a>
+
+<!--자바스크립트-->
+<script th:src="@{/js/jquery-3.7.1.min.js}"></script>
+<script th:src="@{/js/jquery-validation.js}"></script>
+<script th:src="@{/js/register.js}"></script>
+</body>
+</html>
