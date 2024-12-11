@@ -205,7 +205,7 @@ return new org.springframework.security.core.userdetails.User(
 
 ```html
 <form id="loginForm" th:action="@{/login}" method="post">
-	<div th:if="${param.?}">잘못된 이메일 또는 패스워드 입니다</div>
+	<div th:if="${param.login}">잘못된 이메일 또는 패스워드 입니다</div>
 ```
 
 ![Login7](https://github.com/user-attachments/assets/c239ddd2-8174-43c2-9658-464be8914fad)
