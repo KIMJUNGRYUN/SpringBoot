@@ -39,6 +39,7 @@
 ```
 
 - 로그인하면 에러페이지가 표시됨
+
 ![error4](https://github.com/user-attachments/assets/3a3dd08a-d673-4758-800a-ed7ae7caee93)
 
 <hr>
