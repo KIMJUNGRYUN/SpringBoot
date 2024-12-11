@@ -86,7 +86,7 @@
 		</div>
 ```
 
-`로그인된(인증된)유저가 다시 /login 페이지로 요청시에는? => /expenses로 보내기
+`로그인된(인증된)유저가 다시 /login 페이지로 요청시에는? => /expenses로 보내기`
 
 - AuthController
 
