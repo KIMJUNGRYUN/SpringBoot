@@ -368,7 +368,10 @@ List<Expense> list = expRepo.findByNameContainingAndDateBetweenAndUserId(keyword
 server.error.whitelabel.enabled=true (디폴트값)
 ```
 
+
 [Uploading 404<!DOCTYPE html>
+
+```html
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -425,5 +428,86 @@ server.error.whitelabel.enabled=true (디폴트값)
 </body>
 </html>
 .html…]()
+```
 
+![error2](https://github.com/user-attachments/assets/864df2aa-888b-4172-98ed-c3526d6a861f)
+
+<hr>
+
+**커스텀 예외의 처리**
+- 익셉션 패키지에 ExpenseNotFoundException 클래스 만들기 (런타임 예외 상속)
+
+```spring
+@Getter
+public class ExpenseNotFoundException extends RuntimeException{
+	private static final long serialVersionUID = 1L;
+	
+	private String message;
+	
+	public ExpenseNotFoundException(String message) {
+		this.message = message;
+	}
+}
+
+```
+
+- ExpenseService 에 보면 id로 Expense를 찾는데 없을경우에 오류를 발생시키는 코드가 있음
+  - 특정 런타임예외를 위해서 만든 커스텀 예외로 처리
+
+```spring
+private Expense getExpense(String id) {
+		return expRepo.findByExpenseId(id).orElseThrow(() 
+				-> new RuntimeException("해당 ID의 아이템을 찾을 수 없습니다"));
+	}
+```
+
+<hr>
+
+**런타임예외 발생시 글로벌 예외처리
+`GlobalDefaultExceptionHandler`
+
+```spring
+@ControllerAdvice
+public class GlobalDefaultExceptionHandler {
+
+	@ExceptionHandler(ExpenseNotFoundException.class)
+	public String handleExpenseNotFound(HttpServletRequest request,
+			ExpenseNotFoundException ex, Model model){
+
+		model.addAttribute("notfound", true);
+		model.addAttribute("message", ex.getMessage());
+		return "response";
+	}
+}
+```
+
+- `@ControllerAdvice`는 모든 컨트롤러 클래스에 적용
+- `@ExceptionHandler(예외종류류.class) 괄호안의 에외발생시 이 메소드에서 처리함.
+  - 현재 ControllerAdvice가 적용되어 모든 컨트롤러에서 이 예외가 발생하면 여기서 처리됨.
+
+`템플렛에 response.html 만들기`
+
+```html
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>에러 페이지</title>
+	</head>
+	<body>
+		<div th:if="${notfound}">
+			<h1>서비스를 이용할 수 없습니다</h1>
+			<p th:text="${message}"></p>
+			<a th:href="@{/}">Back to Home</a>
+		</div>
+	</body>
+</html>
+```
+
+- 비용 수정 페이지에서 주소를 조금 틀리게 하면
+
+![error3](https://github.com/user-attachments/assets/e4fd8a34-81cc-461d-953d-1b68b30d676c)
+
+<hr>
 
