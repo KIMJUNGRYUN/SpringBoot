@@ -1,6 +1,6 @@
 # 비용관리2
 
-**로그엔 페이지 - 제이쿼리 Validation**
+**로그인 페이지 - 제이쿼리 Validation**
 - register 페이지와 동일하게 제이쿼리 라이브러리와 커스텀 login.js 추가.
 - login.js
   - 1.로그인 페이지에 form 태그에 id를 입력 loginForm
